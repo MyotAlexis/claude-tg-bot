@@ -6,7 +6,10 @@ from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTyp
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_KEY")
 
-client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+client = anthropic.Anthropic(
+    api_key=ANTHROPIC_KEY,
+    base_url="https://api.proxyapi.ru/anthropic"
+)
 
 chat_histories = {}
 
