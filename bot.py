@@ -28,11 +28,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     response = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=1024,
-        system="Ты полезный ассистент. Отвечай кратко и по делу.",
-        messages=chat_histories[user_id]
+        system="Ты полезный ассистент. Отвечай кратко и по делу. Если нужна актуальная информация — используй поиск.",
+        messages=chat_histories[user_id],
+        tools=[{
+            "type": "web_search_20250305",
+            "name": "web_search"
+        }]
     )
 
-    assistant_reply = response.content[0].text
+    # Собираем полный ответ включая результаты поиска
+    assistant_reply = ""
+    for block in response.content:
+        if hasattr(block, "text"):
+            assistant_reply += block.text
+
+    if not assistant_reply:
+        assistant_reply = "Не удалось получить ответ."
 
     chat_histories[user_id].append({
         "role": "assistant",
